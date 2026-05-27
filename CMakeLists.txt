@@ -191,6 +191,14 @@ add_custom_command(TARGET TinyRequest POST_BUILD
     COMMENT "Copying assets directory to build output"
 )
 
+# Optional test suite (non-UI core modules).
+# Enable with: cmake -S . -B build -DBUILD_TESTING=ON
+option(BUILD_TESTING "Build the TinyRequest unit test suite" OFF)
+if(BUILD_TESTING)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+
 # Print configuration information
 message(STATUS "Build configuration:")
 message(STATUS "  CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
