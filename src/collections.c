@@ -39,22 +39,22 @@ static void generate_collection_id(char* id_buffer, size_t buffer_size) {
 
 static int resize_array(void** array, int* capacity, size_t element_size) {
     if (!array || !capacity || *capacity < 0) {
-        return -1; 
+        return -1;
     }
 
     if (*capacity > 10000 || *capacity > INT_MAX / 2) {
-        return -1; 
+        return -1;
     }
 
     int new_capacity = (*capacity) * 2;
 
     if (element_size > SIZE_MAX / new_capacity) {
-        return -1; 
+        return -1;
     }
 
     void* new_array = realloc(*array, new_capacity * element_size);
     if (!new_array) {
-        return -1; 
+        return -1;
     }
     *array = new_array;
     *capacity = new_capacity;
@@ -169,7 +169,7 @@ int collection_add_request(Collection* collection, const Request* request, const
 
     size_t name_len = strlen(name);
     if (name_len == 0 || name_len > 255) {
-        return -1; 
+        return -1;
     }
 
     if (collection->request_count >= collection->request_capacity) {
@@ -208,8 +208,8 @@ int collection_add_request(Collection* collection, const Request* request, const
     collection->requests[index].url[url_len] = '\0';
 
     for (int i = 0; i < request->headers.count; i++) {
-        if (header_list_add(&collection->requests[index].headers, 
-                           request->headers.headers[i].name, 
+        if (header_list_add(&collection->requests[index].headers,
+                           request->headers.headers[i].name,
                            request->headers.headers[i].value) != 0) {
 
         }
@@ -220,7 +220,7 @@ int collection_add_request(Collection* collection, const Request* request, const
 
         }
     }
-    
+
     // Copy authentication data from source request
     collection->requests[index].selected_auth_type = request->selected_auth_type;
     strncpy(collection->requests[index].auth_api_key_name, request->auth_api_key_name, sizeof(collection->requests[index].auth_api_key_name) - 1);
@@ -236,13 +236,13 @@ int collection_add_request(Collection* collection, const Request* request, const
     strncpy(collection->requests[index].auth_oauth_token, request->auth_oauth_token, sizeof(collection->requests[index].auth_oauth_token) - 1);
     collection->requests[index].auth_oauth_token[sizeof(collection->requests[index].auth_oauth_token) - 1] = '\0';
     collection->requests[index].auth_api_key_location = request->auth_api_key_location;
-    
+
     // Copy authentication checkboxes
     collection->requests[index].auth_api_key_enabled = request->auth_api_key_enabled;
     collection->requests[index].auth_bearer_enabled = request->auth_bearer_enabled;
     collection->requests[index].auth_basic_enabled = request->auth_basic_enabled;
     collection->requests[index].auth_oauth_enabled = request->auth_oauth_enabled;
-    
+
     printf("DEBUG: collection_add_request - copied auth data: type=%d, api_key_name='%s', bearer_token='%s', api_key_enabled=%s\n",
            collection->requests[index].selected_auth_type,
            collection->requests[index].auth_api_key_name,
@@ -545,7 +545,7 @@ int collection_manager_duplicate_collection(CollectionManager* manager, int coll
     }
 
     int result = collection_manager_add_collection(manager, new_collection);
-    collection_destroy(new_collection); 
+    collection_destroy(new_collection);
 
     return result;
 }
@@ -568,7 +568,7 @@ Collection* collection_manager_get_active_collection(CollectionManager* manager)
 
 Request* collection_manager_get_active_request(CollectionManager* manager) {
     Collection* active_collection = collection_manager_get_active_collection(manager);
-    if (!active_collection || manager->active_request_index < 0 || 
+    if (!active_collection || manager->active_request_index < 0 ||
         manager->active_request_index >= active_collection->request_count) {
         return NULL;
     }
@@ -658,7 +658,7 @@ bool collection_validate_name(const char* name) {
 
 bool collection_validate_description(const char* description) {
     if (!description) {
-        return true; 
+        return true;
     }
 
     if (strlen(description) >= 512) {
@@ -841,7 +841,7 @@ int cookie_jar_add_cookie(CookieJar* jar, const char* name, const char* value,
         strncpy(cookie->path, path, sizeof(cookie->path) - 1);
         cookie->path[sizeof(cookie->path) - 1] = '\0';
     } else {
-        strncpy(cookie->path, "/", sizeof(cookie->path) - 1); 
+        strncpy(cookie->path, "/", sizeof(cookie->path) - 1);
         cookie->path[sizeof(cookie->path) - 1] = '\0';
     }
 
@@ -1105,13 +1105,13 @@ char* cookie_jar_build_cookie_header(CookieJar* jar, const char* url, bool is_se
     size_t total_size = 0;
     for (int i = 0; i < match_count; i++) {
         total_size += strlen(matching_cookies[i]->name);
-        total_size += 1; 
+        total_size += 1;
         total_size += strlen(matching_cookies[i]->value);
         if (i < match_count - 1) {
-            total_size += 2; 
+            total_size += 2;
         }
     }
-    total_size += 1; 
+    total_size += 1;
 
     /* allocate buffer */
     char* cookie_header = malloc(total_size);
@@ -1140,7 +1140,7 @@ char* cookie_jar_build_cookie_header(CookieJar* jar, const char* url, bool is_se
         }
 
         size_t value_len = strlen(matching_cookies[i]->value);
-        if (value_len < remaining) {
+        if (value_len <= remaining) {
             strncat(cookie_header, matching_cookies[i]->value, remaining);
             current_len += value_len;
             remaining -= value_len;
@@ -1249,7 +1249,7 @@ int cookie_jar_parse_set_cookie(CookieJar* jar, const char* set_cookie_header, c
             path[sizeof(path) - 1] = '\0';
         } else if (strncasecmp(token, "expires=", 8) == 0) {
 
-            expires = time(NULL) + 3600; 
+            expires = time(NULL) + 3600;
         } else if (strncasecmp(token, "max-age=", 8) == 0) {
             max_age = atoi(token + 8);
         } else if (strcasecmp(token, "secure") == 0) {
